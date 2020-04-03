@@ -15,5 +15,5 @@ create table Listings-Summary(
    reviews_per_month varchar(10),
    calculated_host_listings_count int,
    availability_365 int,
-   
+   primary key(id)
 );

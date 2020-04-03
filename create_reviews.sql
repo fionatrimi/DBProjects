@@ -4,5 +4,6 @@ create table Reviews(
    date date,
    reviewer_id int,
    reviewer_name varchar(50),
-   comments text
+   comments text,
+   primary key(id)
 );

@@ -105,5 +105,5 @@ create table Listings(
    calculated_host_listings_count_private_rooms int,
    calculated_host_listings_count_shared_rooms int,
    reviews_per_month varchar(10),
-   primary key (id)
+   primary key(id)
 );
