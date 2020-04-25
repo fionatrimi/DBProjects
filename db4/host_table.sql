@@ -1,0 +1,21 @@
+CREATE "Host"(
+    id, 
+    url,
+    name, 
+    since,
+    location,
+    about,
+    response_time,
+    response_rate, 
+    acceptance_rate, 
+    is_superhost,
+    thumbnail_url,
+    picture_url, 
+    neighbourhood, 
+    listings_count,
+    total_listings_count, 
+    verifications, 
+    has_profile_pic, 
+    identity_verified,
+    calculated_listings_count
+)
