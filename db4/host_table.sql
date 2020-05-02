@@ -1,35 +1,34 @@
-CREATE TABLE temp_host AS 
-SELECT DISTINCT
-host_id, host_url, host_name, host_since,
- host_location, host_about,
-host_response_time, host_response_rate,
- host_acceptance_rate, host_is_superhost,
-host_thumbnail_url, host_picture_url,
- host_neighbourhood, host_listings_count,
-host_total_listings_count,
- host_verifications, host_has_profile_pic,
-host_identity_verified,
-calculated_host_listings_count
-FROM temp_listings;
+CREATE TABLE "Host" AS
+	(SELECT DISTINCT host_id as id,host_url as url ,host_name as name ,host_since as since ,host_location as location,host_about as about,
+		host_response_time as response_time ,host_response_rate as response_rate,host_acceptance_rate as acceptance_rate,
+		host_is_superhost as superhost ,host_thumbnail_url as thumbnail_url,host_picture_url as picture_url,
+		host_neighbourhood as neighbourhood ,host_listings_count as listings_count ,host_total_listings_count as total_listings_count,
+		host_verifications as verifications ,host_has_profile_pic as has_profile_pic ,host_identity_verified as identity_verified ,calculated_host_listings_count as host_listings_count
+	FROM "Listings");
 
-ALTER TABLE temp_host RENAME COLUMN host_id TO id;
-ALTER TABLE temp_host RENAME COLUMN host_url TO url;
-ALTER TABLE temp_host RENAME COLUMN host_name TO name;
-ALTER TABLE temp_host RENAME COLUMN host_since TO since;
-ALTER TABLE temp_host RENAME COLUMN host_location TO location;
-ALTER TABLE temp_host RENAME COLUMN host_about TO about;
-ALTER TABLE temp_host RENAME COLUMN host_response_time TO response_time;
-ALTER TABLE temp_host RENAME COLUMN host_acceptance_rate TO acceptance_rate;
-ALTER TABLE temp_host RENAME COLUMN host_is_superhost TO is_superhost;
-ALTER TABLE temp_host RENAME COLUMN host_thumbnail_url TO thumbnail_url;
-ALTER TABLE temp_host RENAME COLUMN host_picture_url TO picture_url;
-ALTER TABLE temp_host RENAME COLUMN host_neighbourhood TO neighbourhood;
-ALTER TABLE temp_host RENAME COLUMN host_listings_count TO listings_count;
-ALTER TABLE temp_host RENAME COLUMN host_total_listings_count TO total_listings_count;
-ALTER TABLE temp_host RENAME COLUMN host_verifications TO verifications;
-ALTER TABLE temp_host RENAME COLUMN host_has_profile_pic TO has_profile_pic;
-ALTER TABLE temp_host RENAME COLUMN host_verifications TO verifications;
-ALTER TABLE temp_host RENAME COLUMN host_identity_verified TO identity_verified;
+	ALTER TABLE "Listings" 
+  DROP COLUMN host_url,
+  DROP COLUMN host_name,
+  DROP COLUMN host_since,
+  DROP COLUMN host_location,
+  DROP COLUMN host_about,
+  DROP COLUMN host_response_rate,
+  DROP COLUMN host_response_time,
+  DROP COLUMN host_acceptance_rate,
+  DROP COLUMN host_is_superhost,
+  DROP COLUMN host_thumbnail_url,
+  DROP COLUMN host_picture_url,
+  DROP COLUMN host_neighbourhood,
+  DROP COLUMN host_listings_count,
+  DROP COLUMN host_total_listings_count,
+  DROP COLUMN host_verifications,
+  DROP COLUMN host_has_profile_picm
+  DROP COLUMN host_identity_verified,
+  DROP COLUMN calculated_host_listings_count;
 
-ALTER TABLE temp_host ADD PRIMARY KEY (id);
-ALTER TABLE temp_listings ADD FOREIGN KEY (host_id) REFERENCES temp_host(id);
+ALTER TABLE "Host"
+ADD PRIMARY KEY (id);
+
+ALTER TABLE "Listings"
+ADD FOREIGN KEY (host_id) REFERENCES "Host"(id);
+
