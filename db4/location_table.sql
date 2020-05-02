@@ -9,6 +9,14 @@ CREATE TABLE temp_location AS
     FROM temp_listings
 );
 
+ALTER TABLE temp_location
+ADD FOREIGN KEY (id) REFERENCES temp_listings(id);
+
+ALTER TABLE temp_listings DROP foreign KEY neighbourhood_cleansed;
+
+ALTER TABLE temp_location
+ADD FOREIGN KEY (neighbourhood_cleansed) REFERENCES "Neighbourhoods"(neighbourhood);
+
 ALTER TABLE temp_listings
 DROP COLUMN street,
 DROP COLUMN neighbourhood,
@@ -23,11 +31,3 @@ DROP COLUMN country,
 DROP COLUMN latitude,
 DROP COLUMN longitude,
 DROP COLUMN is_location_exact;
-
-ALTER TABLE temp_location
-ADD FOREIGN KEY (id) REFERENCES temp_listings(id);
-
-ALTER TABLE temp_listings DROP foreign KEY neighbourhood_cleansed;
-
-ALTER TABLE temp_location
-ADD FOREIGN KEY (neighbourhood_cleansed) REFERENCES "Neighbourhoods"(neighbourhood);
