@@ -22,7 +22,7 @@ CREATE TABLE "Host" AS
   DROP COLUMN host_listings_count,
   DROP COLUMN host_total_listings_count,
   DROP COLUMN host_verifications,
-  DROP COLUMN host_has_profile_picm
+  DROP COLUMN host_has_profile_pic,
   DROP COLUMN host_identity_verified,
   DROP COLUMN calculated_host_listings_count;
 
