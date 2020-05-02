@@ -12,7 +12,7 @@ CREATE TABLE temp_location AS
 ALTER TABLE temp_location
 ADD FOREIGN KEY (id) REFERENCES temp_listings(id);
 
-ALTER TABLE temp_listings DROP foreign KEY neighbourhood_cleansed;
+ALTER TABLE temp_listings DROP FOREIGN KEY "temp_listings_neighbourhood_cleansed_fkey";
 
 ALTER TABLE temp_location
 ADD FOREIGN KEY (neighbourhood_cleansed) REFERENCES "Neighbourhoods"(neighbourhood);
