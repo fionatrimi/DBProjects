@@ -53,21 +53,28 @@ ALTER TABLE "Price"
 ADD FOREIGN KEY (id) REFERENCES "Listings"(id);
 
 ALTER TABLE "Listings" 
-  DROP COLUMN price,
-  DROP COLUMN weekly_price,
-  DROP COLUMN monthly_price,
-  DROP COLUMN security_deposit,
-  DROP COLUMN cleaning_fee,
-  DROP COLUMN guests_included,
-  DROP COLUMN extra_people,
-  DROP COLUMN minimum_nights,
-  DROP COLUMN maximum_nights,
-  DROP COLUMN minimum_minimum_nights,
-  DROP COLUMN maximum_minimum_nights,
-  DROP COLUMN minimum_maximum_nights,
-  DROP COLUMN maximum_maximum_nights,
-  DROP COLUMN minimum_nights_avg_ntm,
-  DROP COLUMN maximum_nights_avg_ntm;
+	/*
+	PROSOXH OI STHLES price, weekly_price, monthly_price, security_deposit
+	DIAGRAFONTAI KAI APO TO ARXEIO room_table.sql
+	-EKSARTHSH APO THN SEIRA POY TREXEI TO KATHE ARXEIO
+	AN TREKSOUME TO room_table.sql PRIN TO price_table.sql
+	TOTE NA MPOUN SE SXOLIO OI PARAKATW 4 GRAMMES
+	*/
+	DROP COLUMN price,
+	DROP COLUMN weekly_price,
+	DROP COLUMN monthly_price,
+	DROP COLUMN security_deposit,
+	DROP COLUMN cleaning_fee,
+	DROP COLUMN guests_included,
+	DROP COLUMN extra_people,
+	DROP COLUMN minimum_nights,
+	DROP COLUMN maximum_nights,
+	DROP COLUMN minimum_minimum_nights,
+	DROP COLUMN maximum_minimum_nights,
+	DROP COLUMN minimum_maximum_nights,
+	DROP COLUMN maximum_maximum_nights,
+	DROP COLUMN minimum_nights_avg_ntm,
+	DROP COLUMN maximum_nights_avg_ntm;
 
 
 
