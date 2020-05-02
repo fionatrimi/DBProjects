@@ -30,4 +30,4 @@ ADD FOREIGN KEY (id) REFERENCES temp_listings(id);
 ALTER TABLE temp_listings DROP foreign KEY neighbourhood_cleansed;
 
 ALTER TABLE temp_location
-ADD FOREIGN KEY (neighbourhood_cleansed) REFERENCES temp_listings(neighbourhood);
+ADD FOREIGN KEY (neighbourhood_cleansed) REFERENCES "Neighbourhoods"(neighbourhood);
