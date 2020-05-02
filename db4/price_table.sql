@@ -41,6 +41,12 @@ ALTER TABLE "Price"
 
 ALTER TABLE "Price"
 	ALTER COLUMN extra_people TYPE decimal USING extra_people::numeric;
+	
+ALTER TABLE "Price"
+	ALTER COLUMN minimum_nights_avg_ntm TYPE decimal USING minimum_nights_avg_ntm::numeric;
+	
+ALTER TABLE "Price"
+	ALTER COLUMN maximum_nights_avg_ntm TYPE decimal USING maximum_nights_avg_ntm::numeric;
 
 
 ALTER TABLE "Price"
