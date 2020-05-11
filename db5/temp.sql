@@ -23,7 +23,8 @@ ADD COLUMN amenity_id SERIAL PRIMARY KEY;
                   
 CREATE TABLE "Room_Amenities_Temp"(
 	room_id int,
-	amenity_id int
+	amenity_id int,
+	PRIMARY KEY (room_id,amenity_id)
 );
 
 WITH cte_room_amenities(room_id,amenity_name) as(
