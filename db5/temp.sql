@@ -32,6 +32,6 @@ WITH cte_room_amenities(room_id,amenity_name) as(
 	from "Room" as r
 )
 INSERT INTO "Room_Amenities_Temp"
-SELECT room_id , tempAmenity.amenity_id
+SELECT DISTINCT room_id , tempAmenity.amenity_id
 	FROM cte_room_amenities,tempAmenity
 	WHERE cte_room_amenities.amenity_name = tempAmenity.amenity_name;
