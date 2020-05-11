@@ -15,6 +15,9 @@ CREATE TABLE tempAmenity AS
                         
 UPDATE tempAmenity
 SET
-amenity_name = REPLACE (amenity_name,'"','');                         
+amenity_name = REPLACE (amenity_name,'"','');
+			       
+ALTER TABLE tempAmenity
+ADD COLUMN amenity_id SERIAL PRIMARY KEY;			       
 												 
                   
