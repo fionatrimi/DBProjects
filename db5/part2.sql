@@ -1,3 +1,5 @@
+--ΠΡΕΠΕΙ ΚΑΤΙ ΝΑ ΑΛΛΑΞΟΥΜΕ ΓΙΑ ΝΑ ΕΧΟΥΜΕ ΚΑΙ 2 OUTER JOIN, κατα τα αλλα τα εχουμε κανει ολα
+
 --Εμφανιζει για καθε room τα amenities του
 SELECT r.id,am.amenity_name
 FROM "Room" as r
@@ -46,3 +48,17 @@ INNER JOIN "Neighbourhood" AS neig
 ON neig.neighbourhood = loc.neighbourhood_cleansed
 INNER JOIN "Geolocation" AS geo
 ON geo.properties_neighbourhood=neig.neighbourhood
+
+--Εμφανίζει τα ονόματα των host που διαθέτουν δωμάτια με 3 κρεβάτια, 3 άτομα και απαντάνε εντώς μιας ώρας
+SELECT h.name, h.id
+FROM
+	(SELECT li.host_id
+	FROM 
+		(SELECT id 
+		 FROM "Room" ro
+		 WHERE beds=3 AND accommodates=3) AS r
+	INNER JOIN "Listing" AS li 
+	ON li.id=r.id) AS host_ID
+INNER JOIN "Host" AS h
+ON h.id = host_ID.host_id
+WHERE h.response_time='within an hour'
