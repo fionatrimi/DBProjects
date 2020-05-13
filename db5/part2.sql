@@ -7,13 +7,16 @@ INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
 ORDER BY(r.id)
 
 
-Select r.id
-FROM "Room" as r
+Select l.id , l.name
+FROM "Listings" as l
+INNER JOIN "Price" as p ON p.id = l.id
+INNER JOIN "Room" as r on r.id = l.id
 INNER JOIN "Room_Amenities" AS ra ON ra.room_id = r.id
 INNER JOIN "Amenity" AS am ON am.amenity_id = ra.amenity_id
 WHERE am.amenity_name IN ('Dishwasher','Dryer')
-GROUP BY r.id
+GROUP BY l.id
 HAVING COUNT(am.amenity_name)=2
+
 
 --Υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
 SELECT COUNT(r_a.room_id), am.amenity_name
