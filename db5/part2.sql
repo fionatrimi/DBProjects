@@ -6,16 +6,21 @@ INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
 INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
 ORDER BY(r.id)
 
+with cte as (
+	SELECT l.id , l.name ,p.price as price
+			FROM "Listings" as l
+			INNER JOIN "Price" as p ON p.id = l.id
+			INNER JOIN "Room" as r on r.id = l.id
+			INNER JOIN "Room_Amenities" AS ra ON ra.room_id = r.id
+			INNER JOIN "Amenity" AS am ON am.amenity_id = ra.amenity_id
+			WHERE am.amenity_name IN ('Dishwasher','Dryer')
+			GROUP BY l.id,p.price
+			HAVING COUNT(am.amenity_name)=2
+)
 
-Select l.id , l.name
-FROM "Listings" as l
-INNER JOIN "Price" as p ON p.id = l.id
-INNER JOIN "Room" as r on r.id = l.id
-INNER JOIN "Room_Amenities" AS ra ON ra.room_id = r.id
-INNER JOIN "Amenity" AS am ON am.amenity_id = ra.amenity_id
-WHERE am.amenity_name IN ('Dishwasher','Dryer')
-GROUP BY l.id
-HAVING COUNT(am.amenity_name)=2
+SELECT cte.id,cte.name,cte.price
+	FROM cte
+	WHERE cte.price = (SELECT MIN(cte.price) FROM cte)
 
 
 --Υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
