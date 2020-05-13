@@ -6,6 +6,7 @@ INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
 INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
 ORDER BY(r.id)
 
+-- Εμφανιζει το listing(id,name,price) με την χαμηλοτερη τιμη που εχει ως υπηρεσιες dishwasher και dryer --
 with cte as (
 	SELECT l.id , l.name ,p.price as price
 			FROM "Listings" as l
