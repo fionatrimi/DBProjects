@@ -49,7 +49,7 @@ ON neig.neighbourhood = loc.neighbourhood_cleansed
 INNER JOIN "Geolocation" AS geo
 ON geo.properties_neighbourhood=neig.neighbourhood
 
---Εμφανίζει τα ονόματα των host και τον αριθμο των δωματιων που διαθέτουν(εκανα αυτη την αλλαγη για να χρησιμποιησουμε ακομα 1 group by) με 3 κρεβάτια, 3 άτομα και απαντάνε εντώς μιας ώρας
+--Εμφανίζει τα ονόματα των host που διαθέτουν δωματια με 3 κρεβάτια, 3 άτομα και απαντάνε εντώς μιας ώρας
 SELECT h.name, h.id
 FROM
 	(SELECT li.host_id
@@ -70,4 +70,3 @@ SELECT h.name,h.id,COUNT(h.id)
 	INNER JOIN "Room" as r ON r.id = l.id 
 	INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
 	WHERE r.beds=3 AND r.accommodates=3 AND h.response_time = 'within an hour'
-	GROUP BY (h.id)
