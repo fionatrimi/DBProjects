@@ -1,5 +1,12 @@
 --ΠΡΕΠΕΙ ΚΑΤΙ ΝΑ ΑΛΛΑΞΟΥΜΕ ΓΙΑ ΝΑ ΕΧΟΥΜΕ ΚΑΙ 2 OUTER JOIN, κατα τα αλλα τα εχουμε κανει ολα
 
+--Εμφανιζει τα neighbourhoods και τα δωματια που υπαρχουν σε αυτα (μπορουμε να το βαλουμε στη θεση του παρακατω query)--
+SELECT n.neighbourhood,l.id
+	FROM "Neighbourhoods" as n
+	LEFT OUTER JOIN "Location" as loc on loc.neighbourhood_cleansed = n.neighbourhood
+	INNER JOIN "Listings" as L ON l.id = loc.id
+
+
 --Εμφανιζει για καθε room τα amenities του
 SELECT ra.room_id,am.amenity_name
 	FROM "Room_Amenities" as ra 
