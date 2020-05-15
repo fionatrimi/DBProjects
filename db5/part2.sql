@@ -62,3 +62,11 @@ FROM
 INNER JOIN "Host" AS h
 ON h.id = host_ID.host_id
 WHERE h.response_time='within an hour'
+
+// αυτο ειναι το ιδιο με το παραπανω απλα χωρις subquery select. Νομιζω γενικα μπορουμε να τα αποφυγουμε δω τα subqueries//
+SELECT h.name,h.id
+	FROM "Host" as h
+	INNER JOIN "Listings" as l ON l.host_id = h.id
+	INNER JOIN "Room" as r ON r.id = l.id 
+	INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
+	WHERE r.beds=3 AND r.accommodates=3 AND h.response_time = 'within an hour'
