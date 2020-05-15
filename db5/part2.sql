@@ -1,11 +1,11 @@
 --ΠΡΕΠΕΙ ΚΑΤΙ ΝΑ ΑΛΛΑΞΟΥΜΕ ΓΙΑ ΝΑ ΕΧΟΥΜΕ ΚΑΙ 2 OUTER JOIN, κατα τα αλλα τα εχουμε κανει ολα
 
 --Εμφανιζει για καθε room τα amenities του
-SELECT r.id,am.amenity_name
-FROM "Room" as r
-INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
-INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
-ORDER BY(r.id)
+SELECT ra.room_id,am.amenity_name
+	FROM "Room_Amenities" as ra 
+	INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
+ORDER BY(ra.room_id)
+
 
 -- Εμφανιζει το listing(id,name,price) με την χαμηλοτερη τιμη που εχει ως υπηρεσιες dishwasher και dryer --
 with cte as (
