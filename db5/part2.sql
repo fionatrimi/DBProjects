@@ -1,5 +1,5 @@
 /* 1.	Εμφανιζει τα neighbourhoods και τα δωματια 
-	που υπαρχουν σε αυτα (μπορουμε να το βαλουμε στη θεση του παρακατω query).
+	που υπαρχουν σε αυτα.
 	Output: 11541 rows
 */
 SELECT n.neighbourhood,l.id
@@ -8,16 +8,7 @@ SELECT n.neighbourhood,l.id
 	INNER JOIN "Listings" as L ON l.id = loc.id
 
 
-/* 2.	Εμφανιζει για καθε room τα amenities του.
-	Output: 133481
-*/
-SELECT ra.room_id,am.amenity_name
-	FROM "Room_Amenities" as ra 
-	INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
-ORDER BY(ra.room_id)
-
-
-/* 3.	Εμφανιζει το listing(id,name,price) 
+/* 2.	Εμφανιζει το listing(id,name,price) 
 	με την χαμηλοτερη τιμη που εχει ως υπηρεσιες dishwasher και dryer
 	Output: 1 rows
 */
@@ -38,7 +29,7 @@ SELECT cte.id,cte.name,cte.price
 	WHERE cte.price = (SELECT MIN(cte.price) FROM cte)
 
 
-/* 4.	Εμφαφανίζει τις υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
+/* 3.	Εμφαφανίζει τις υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
 	Output: 26 rows
 */
 SELECT COUNT(r_a.room_id), am.amenity_name
@@ -48,7 +39,7 @@ GROUP BY am.amenity_name
 HAVING COUNT(r_a.room_id) >= 100
 
 
-/* 5.	Εμφαφανίζει τα ID και τις 0_0_0_0 συντεταγμένες των δωματίων που διαθέτουν Netflix
+/* 4.	Εμφαφανίζει τα ID και τις 0_0_0_0 συντεταγμένες των δωματίων που διαθέτουν Netflix
 	Output: 109 rows
 */
 SELECT ListingID.id, geo.geometry_coordinates_0_0_0_0 FROM "Location" loc
@@ -64,11 +55,11 @@ INNER JOIN(
 ON loc.id = ListingID.id
 INNER JOIN "Neighbourhood" AS neig
 ON neig.neighbourhood = loc.neighbourhood_cleansed
-INNER JOIN "Geolocation" AS geo
+LEFT OUTER JOIN "Geolocation" AS geo
 ON geo.properties_neighbourhood=neig.neighbourhood
 
 
-/* 6.	Εμφανίζει τα ονόματα των host που διαθέτουν 
+/* 5.	Εμφανίζει τα ονόματα των host που διαθέτουν 
 	δωματια με 3 κρεβάτια, 
 	3 άτομα 
 	και απαντάνε εντώς μιας ώρας.
