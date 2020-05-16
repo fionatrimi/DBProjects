@@ -3,7 +3,7 @@
 	Output: 11541 rows
 */
 SELECT n.neighbourhood,l.id
-	FROM "Neighbourhoods" as n
+	FROM "Neighbourhood" as n
 	LEFT OUTER JOIN "Location" as loc on loc.neighbourhood_cleansed = n.neighbourhood
 	INNER JOIN "Listing" as L ON l.id = loc.id
 
