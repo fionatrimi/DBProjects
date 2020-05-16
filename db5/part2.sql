@@ -14,14 +14,14 @@ SELECT n.neighbourhood,l.id
 */
 with cte as (
 	SELECT l.id , l.name ,p.price as price
-			FROM "Listing" as l
-			INNER JOIN "Price" as p ON p.id = l.id
-			INNER JOIN "Room" as r on r.id = l.id
-			INNER JOIN "Room_Amenities" AS ra ON ra.room_id = r.id
-			INNER JOIN "Amenity" AS am ON am.amenity_id = ra.amenity_id
-			WHERE am.amenity_name IN ('Dishwasher','Dryer')
-			GROUP BY l.id,p.price
-			HAVING COUNT(am.amenity_name)=2
+		FROM "Listing" as l
+		INNER JOIN "Price" as p ON p.id = l.id
+		INNER JOIN "Room" as r on r.id = l.id
+		INNER JOIN "Room_Amenities" AS ra ON ra.room_id = r.id
+		INNER JOIN "Amenity" AS am ON am.amenity_id = ra.amenity_id
+		WHERE am.amenity_name IN ('Dishwasher','Dryer')
+		GROUP BY l.id,p.price
+	HAVING COUNT(am.amenity_name)=2
 )
 
 SELECT cte.id,cte.name,cte.price
@@ -33,9 +33,9 @@ SELECT cte.id,cte.name,cte.price
 	Output: 26 rows
 */
 SELECT COUNT(r_a.room_id), am.amenity_name
-FROM
-("Room_Amenities" r_a INNER JOIN "Amenity" am ON r_a.amenity_id = am.amenity_id)
-GROUP BY am.amenity_name
+	FROM "Room_Amenities" r_a 
+	INNER JOIN "Amenity" am ON r_a.amenity_id = am.amenity_id
+	GROUP BY am.amenity_name
 HAVING COUNT(r_a.room_id) >= 100
 
 
@@ -71,4 +71,4 @@ SELECT h.name,h.id,COUNT(h.id)
 	INNER JOIN "Room" as r ON r.id = l.id 
 	INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
 	WHERE r.beds=3 AND r.accommodates=3 AND h.response_time = 'within an hour'
-	GROUP BY h.name,h.id
+GROUP BY h.name,h.id
