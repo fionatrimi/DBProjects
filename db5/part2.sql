@@ -1,20 +1,26 @@
---ΠΡΕΠΕΙ ΚΑΤΙ ΝΑ ΑΛΛΑΞΟΥΜΕ ΓΙΑ ΝΑ ΕΧΟΥΜΕ ΚΑΙ 2 OUTER JOIN, κατα τα αλλα τα εχουμε κανει ολα
-
---Εμφανιζει τα neighbourhoods και τα δωματια που υπαρχουν σε αυτα (μπορουμε να το βαλουμε στη θεση του παρακατω query)--
+/* 1.	Εμφανιζει τα neighbourhoods και τα δωματια 
+	που υπαρχουν σε αυτα (μπορουμε να το βαλουμε στη θεση του παρακατω query).
+	Output: 11541 rows
+*/
 SELECT n.neighbourhood,l.id
 	FROM "Neighbourhoods" as n
 	LEFT OUTER JOIN "Location" as loc on loc.neighbourhood_cleansed = n.neighbourhood
 	INNER JOIN "Listings" as L ON l.id = loc.id
 
 
---Εμφανιζει για καθε room τα amenities του
+/* 2.	Εμφανιζει για καθε room τα amenities του.
+	Output: 133481
+*/
 SELECT ra.room_id,am.amenity_name
 	FROM "Room_Amenities" as ra 
 	INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id
 ORDER BY(ra.room_id)
 
 
--- Εμφανιζει το listing(id,name,price) με την χαμηλοτερη τιμη που εχει ως υπηρεσιες dishwasher και dryer --
+/* 3.	Εμφανιζει το listing(id,name,price) 
+	με την χαμηλοτερη τιμη που εχει ως υπηρεσιες dishwasher και dryer
+	Output: 1 rows
+*/
 with cte as (
 	SELECT l.id , l.name ,p.price as price
 			FROM "Listing" as l
@@ -32,14 +38,19 @@ SELECT cte.id,cte.name,cte.price
 	WHERE cte.price = (SELECT MIN(cte.price) FROM cte)
 
 
---Εμφαφανίζει τις υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
+/* 4.	Εμφαφανίζει τις υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
+	Output: 26 rows
+*/
 SELECT COUNT(r_a.room_id), am.amenity_name
 FROM
 ("Room_Amenities" r_a INNER JOIN "Amenity" am ON r_a.amenity_id = am.amenity_id)
 GROUP BY am.amenity_name
-HAVING COUNT(r_a.room_id) > 100
+HAVING COUNT(r_a.room_id) >= 100
 
---Εμφαφανίζει τα ID και τις 0_0_0_0 συντεταγμένες των δωματίων που διαθέτουν Netflix
+
+/* 5.	Εμφαφανίζει τα ID και τις 0_0_0_0 συντεταγμένες των δωματίων που διαθέτουν Netflix
+	Output: 109 rows
+*/
 SELECT ListingID.id, geo.geometry_coordinates_0_0_0_0 FROM "Location" loc
 INNER JOIN(
 	SELECT li.id 
@@ -56,24 +67,17 @@ ON neig.neighbourhood = loc.neighbourhood_cleansed
 INNER JOIN "Geolocation" AS geo
 ON geo.properties_neighbourhood=neig.neighbourhood
 
---Εμφανίζει τα ονόματα των host που διαθέτουν δωματια με 3 κρεβάτια, 3 άτομα και απαντάνε εντώς μιας ώρας
-SELECT h.name, h.id
-FROM
-	(SELECT li.host_id
-	FROM 
-		(SELECT id 
-		 FROM "Room" ro
-		 WHERE beds=3 AND accommodates=3) AS r
-	INNER JOIN "Listing" AS li 
-	ON li.id=r.id) AS host_ID
-INNER JOIN "Host" AS h
-ON h.id = host_ID.host_id
-WHERE h.response_time='within an hour'
 
-// αυτο ειναι το ιδιο με το παραπανω απλα χωρις subquery select. Νομιζω γενικα μπορουμε να τα αποφυγουμε δω τα subqueries//
+/* 6.	Εμφανίζει τα ονόματα των host που διαθέτουν 
+	δωματια με 3 κρεβάτια, 
+	3 άτομα 
+	και απαντάνε εντώς μιας ώρας.
+	Output: 37 rows
+*/
 SELECT h.name,h.id,COUNT(h.id)
 	FROM "Host" as h
-	INNER JOIN "Listings" as l ON l.host_id = h.id
+	INNER JOIN "Listing" as l ON l.host_id = h.id
 	INNER JOIN "Room" as r ON r.id = l.id 
 	INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
 	WHERE r.beds=3 AND r.accommodates=3 AND h.response_time = 'within an hour'
+	GROUP BY h.name,h.id
