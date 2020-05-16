@@ -59,7 +59,7 @@ LEFT OUTER JOIN "Geolocation" AS geo
 ON geo.properties_neighbourhood=neig.neighbourhood
 -----
 SELECT l.id, geo.geometry_coordinates_0_0_0_0
-	FROM "Listings" as l
+	FROM "Listing" as l
 	INNER JOIN "Location" as loc ON loc.id = l.id
 	INNER JOIN "Geolocation" as geo ON geo.properties_neighbourhood = loc.neighbourhood_cleansed
 	INNER JOIN "Room_Amenities" as ra ON ra.room_id = l.id
