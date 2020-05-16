@@ -5,7 +5,7 @@
 SELECT n.neighbourhood,l.id
 	FROM "Neighbourhoods" as n
 	LEFT OUTER JOIN "Location" as loc on loc.neighbourhood_cleansed = n.neighbourhood
-	INNER JOIN "Listings" as L ON l.id = loc.id
+	INNER JOIN "Listing" as L ON l.id = loc.id
 
 
 /* 2.	Εμφανιζει το listing(id,name,price) 
