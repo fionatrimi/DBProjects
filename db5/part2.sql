@@ -5,7 +5,7 @@
 SELECT n.neighbourhood,l.id
 	FROM "Neighbourhood" as n
 	LEFT OUTER JOIN "Location" as loc on loc.neighbourhood_cleansed = n.neighbourhood
-	INNER JOIN "Listing" as L ON l.id = loc.id
+	INNER JOIN "Listing" as L ON l.id = loc.id;
 
 
 /* 2.	Εμφανιζει το listing(id,name,price) 
@@ -26,7 +26,7 @@ with cte as (
 
 SELECT cte.id,cte.name,cte.price
 	FROM cte
-	WHERE cte.price = (SELECT MIN(cte.price) FROM cte)
+	WHERE cte.price = (SELECT MIN(cte.price) FROM cte);
 
 
 /* 3.	Εμφαφανίζει τις υπηρεσιες που διατιθενται σε παραπανω απο 100 δωματια
@@ -36,41 +36,24 @@ SELECT COUNT(r_a.room_id), am.amenity_name
 	FROM "Room_Amenities" r_a 
 	INNER JOIN "Amenity" am ON r_a.amenity_id = am.amenity_id
 	GROUP BY am.amenity_name
-HAVING COUNT(r_a.room_id) >= 100
+HAVING COUNT(r_a.room_id) >= 100;
 
 
 /* 4.	Εμφαφανίζει τα ID και τις 0_0_0_0 συντεταγμένες των δωματίων που διαθέτουν Netflix
 	Output: 109 rows
 */
-SELECT ListingID.id, geo.geometry_coordinates_0_0_0_0 FROM "Location" loc
-INNER JOIN(
-	SELECT li.id 
-	FROM "Listing" AS li
-	INNER JOIN
-		(SELECT r_a.room_id
-		FROM "Room_Amenities" r_a
-		INNER JOIN "Amenity" am
-		ON r_a.amenity_id=am.amenity_id AND am.amenity_name= 'Netflix') AS RoomID
-	ON RoomID.room_id = li.id) AS ListingID
-ON loc.id = ListingID.id
-INNER JOIN "Neighbourhood" AS neig
-ON neig.neighbourhood = loc.neighbourhood_cleansed
-LEFT OUTER JOIN "Geolocation" AS geo
-ON geo.properties_neighbourhood=neig.neighbourhood
------
 SELECT l.id, geo.geometry_coordinates_0_0_0_0
 	FROM "Listing" as l
 	INNER JOIN "Location" as loc ON loc.id = l.id
 	INNER JOIN "Geolocation" as geo ON geo.properties_neighbourhood = loc.neighbourhood_cleansed
 	INNER JOIN "Room_Amenities" as ra ON ra.room_id = l.id
 	INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id 
-	WHERE am.amenity_name= 'Netflix'
------
+	WHERE am.amenity_name= 'Netflix';
 
 
 /* 5.	Εμφανίζει τα ονόματα των host που διαθέτουν 
 	δωματια με 3 κρεβάτια, 
-	3 άτομα 
+	3 άτομα για διαμονή 
 	και απαντάνε εντώς μιας ώρας.
 	Output: 37 rows
 */
@@ -80,4 +63,4 @@ SELECT h.name,h.id,COUNT(h.id)
 	INNER JOIN "Room" as r ON r.id = l.id 
 	INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
 	WHERE r.beds=3 AND r.accommodates=3 AND h.response_time = 'within an hour'
-GROUP BY h.name,h.id
+GROUP BY h.name,h.id;
