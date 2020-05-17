@@ -25,7 +25,9 @@ CREATE TABLE "Room_Amenities"(
 	room_id int,
 	amenity_id int,
 	PRIMARY KEY (room_id,amenity_id)
-);	       
+);
+			       
+---drop column---			       
 
 WITH cte_room_amenities(room_id,amenity_name) as(
     SELECT id as room_id, unnest(string_to_array(amenities,',')) as amenity_name 
