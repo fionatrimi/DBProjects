@@ -26,8 +26,7 @@ CREATE TABLE "Room_Amenities"(
 	amenity_id int,
 	PRIMARY KEY (room_id,amenity_id)
 );
-			       
----drop column---			       
+			       			       
 
 WITH cte_room_amenities(room_id,amenity_name) as(
     SELECT id as room_id, unnest(string_to_array(amenities,',')) as amenity_name 
@@ -46,4 +45,6 @@ ADD FOREIGN KEY (room_id) REFERENCES "Room"(id);
 			       
 
 ALTER TABLE "Room_Amenities"
-ADD FOREIGN KEY (amenity_id) REFERENCES "Amenity"(amenity_id)	;					 
+ADD FOREIGN KEY (amenity_id) REFERENCES "Amenity"(amenity_id)	;		
+				 
+---drop column---
