@@ -43,8 +43,8 @@ ADD PRIMARY KEY (id);
 ALTER TABLE "Room_Amenities"
 ADD FOREIGN KEY (room_id) REFERENCES "Room"(id);	
 			       
-
 ALTER TABLE "Room_Amenities"
-ADD FOREIGN KEY (amenity_id) REFERENCES "Amenity"(amenity_id)	;		
+ADD FOREIGN KEY (amenity_id) REFERENCES "Amenity"(amenity_id);		
 				 
----drop column---
+ALTER TABLE "Room"
+DROP COLUMN amenities;
