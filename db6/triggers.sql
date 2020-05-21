@@ -3,12 +3,12 @@ RETURNS TRIGGER AS
 'BEGIN
 	IF TG_OP = ''INSERT'' THEN
 		UPDATE "Host_6"
-		SET listings_count=listings_count+1
+		SET host_listings_count=host_listings_count+1
 		WHERE id=NEW.id;
 		RETURN NEW;
 	ELSIF TG_OP = ''DELETE'' THEN
 		UPDATE "Host_6"
-		SET listings_count=listings_count-1
+		SET host_listings_count=host_listings_count-1
 		WHERE id=OLD.id;
 		RETURN OLD;
 	END IF;
