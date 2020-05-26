@@ -1,0 +1,72 @@
+-- explain analyze SELECT "Host".id, COUNT(*) FROM "Listing", "Host" WHERE "Host".id="Listing".host_id GROUP BY "Host".id;
+-------------------BEFORE INDEX:
+
+
+                                                                    QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=10000003709.40..10000004195.19 rows=6363 width=12) (actual time=20.731..39.669 rows=6363 loops=1)
+   Group Key: "Host".id
+   ->  Merge Join  (cost=10000003709.40..10000004073.85 rows=11541 width=4) (actual time=20.717..34.616 rows=11541 loops=1)
+         Merge Cond: ("Listing".host_id = "Host".id)
+         ->  Sort  (cost=10000003709.11..10000003737.96 rows=11541 width=4) (actual time=20.693..23.553 rows=11541 loops=1)
+               Sort Key: "Listing".host_id
+               Sort Method: quicksort  Memory: 925kB
+               ->  Seq Scan on "Listing"  (cost=10000000000.00..10000002930.41 rows=11541 width=4) (actual time=0.008..16.081 rows=11541 loops=1)
+         ->  Index Only Scan using "Host_pkey" on "Host"  (cost=0.28..175.73 rows=6363 width=4) (actual time=0.020..1.694 rows=6363 loops=1)
+               Heap Fetches: 0
+ Planning time: 0.201 ms
+ Execution time: 40.885 ms
+(12 rows)
+
+-------------------AFTER INDEX:
+
+                                                                    QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ HashAggregate  (cost=652.69..716.32 rows=6363 width=12) (actual time=15.951..17.580 rows=6363 loops=1)
+   Group Key: "Host".id
+   ->  Hash Join  (cost=255.55..594.98 rows=11541 width=4) (actual time=3.392..11.845 rows=11541 loops=1)
+         Hash Cond: ("Listing".host_id = "Host".id)
+         ->  Index Only Scan using ix_hosts_id on "Listing"  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.029..2.967 rows=11541 loops=1)
+               Heap Fetches: 0
+         ->  Hash  (cost=175.73..175.73 rows=6363 width=4) (actual time=3.350..3.350 rows=6363 loops=1)
+               Buckets: 8192  Batches: 1  Memory Usage: 288kB
+               ->  Index Only Scan using "Host_pkey" on "Host"  (cost=0.28..175.73 rows=6363 width=4) (actual time=0.014..1.626 rows=6363 loops=1)
+                     Heap Fetches: 0
+ Planning time: 0.281 ms
+ Execution time: 18.774 ms
+(12 rows)
+
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+
+
+-- explain analyze SELECT L.id, price FROM "Listing" L, "Price" P WHERE guests_included > 5 AND price > 40;
+-------------------BEFORE INDEX:
+                                                                    QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=10000000000.28..10000020243.56 rows=1569576 width=8) (actual time=0.048..1645.404 rows=2469774 loops=1)
+   ->  Index Only Scan using "Listings_pkey" on "Listing" l  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.021..3.605 rows=11541 loops=1)
+         Heap Fetches: 0
+   ->  Materialize  (cost=10000000000.00..10000000314.80 rows=136 width=4) (actual time=0.000..0.044 rows=214 loops=11541)
+         ->  Seq Scan on "Price" p  (cost=10000000000.00..10000000314.11 rows=136 width=4) (actual time=0.023..1.252 rows=214 loops=1)
+               Filter: ((guests_included > 5) AND (price > '40'::numeric))
+               Rows Removed by Filter: 11327
+ Planning time: 0.141 ms
+ Execution time: 2096.352 ms
+(9 rows)
+
+-------------------AFTER INDEX:
+                                                                    QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.57..20234.50 rows=1569576 width=8) (actual time=0.051..1561.189 rows=2469774 loops=1)
+   ->  Index Only Scan using "Listings_pkey" on "Listing" l  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.021..3.663 rows=11541 loops=1)
+         Heap Fetches: 0
+   ->  Materialize  (cost=0.29..305.74 rows=136 width=4) (actual time=0.000..0.044 rows=214 loops=11541)
+         ->  Index Only Scan using ix_prices_guests on "Price" p  (cost=0.29..305.06 rows=136 width=4) (actual time=0.025..0.852 rows=214 loops=1)
+               Index Cond: ((price > '40'::numeric) AND (guests_included > 5))
+               Heap Fetches: 0
+ Planning time: 0.138 ms
+ Execution time: 2018.645 ms
+(9 rows)
