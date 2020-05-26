@@ -1,19 +1,20 @@
 CREATE OR REPLACE FUNCTION set_host_listings()
-RETURNS TRIGGER AS
-'BEGIN
-	IF TG_OP = ''INSERT'' THEN
-		UPDATE "Host_6"
+RETURNS TRIGGER AS $emp$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		UPDATE "Host"
 		SET host_listings_count=host_listings_count+1
-		WHERE id=NEW.id;
+		WHERE NEW.host_id = "Host".id;
 		RETURN NEW;
-	ELSIF TG_OP = ''DELETE'' THEN
-		UPDATE "Host_6"
+	ELSIF TG_OP = 'DELETE' THEN
+		UPDATE "Host"
 		SET host_listings_count=host_listings_count-1
-		WHERE id=OLD.id;
+		WHERE OLD.host_id = "Host".id;
 		RETURN OLD;
 	END IF;
 	--return null;
-END;'
+END;
+$emp$
 LANGUAGE plpgsql;
 
 CREATE TRIGGER setter_host_listings AFTER INSERT OR DELETE
