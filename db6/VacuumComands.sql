@@ -1,0 +1,12 @@
+VACUUM ANALYZE "Amenity";
+VACUUM ANALYZE "Calendar";
+VACUUM ANALYZE "Geolocation";
+VACUUM ANALYZE "Host";
+VACUUM ANALYZE "Listings";
+VACUUM ANALYZE "Location";
+VACUUM ANALYZE "Neighbourhoods";
+VACUUM ANALYZE "Price";
+VACUUM ANALYZE "Reviews";
+VACUUM ANALYZE "Reviews_Summary";
+VACUUM ANALYZE "Room";
+VACUUM ANALYZE "Room_Amenities";
