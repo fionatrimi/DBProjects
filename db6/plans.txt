@@ -1,6 +1,12 @@
---QUERY------SELECT "Host".id, COUNT(*) FROM "Listing", "Host" WHERE "Host".id="Listing".host_id GROUP BY "Host".id;--
---BEFORE INDEX--------------------------------------------------------------------------------------------------------
-
+--QUERY--(Prwto QUERY ekfwnishs)--
+/*
+      EXPLAIN ANALYZE 
+      SELECT "Host".id, COUNT(*) 
+      FROM "Listing", "Host"
+      WHERE "Host".id="Listing".host_id 
+      GROUP BY "Host".id;
+*/
+--WITHOUT INDEX--------------------------------------------------------------------------------------------------------
 
                                                                    QUERY PLAN
 -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -19,7 +25,7 @@
 (12 rows)
 
 
---AFTER INDEX---------------------------------------------------------------------------------------------------------
+--WITH INDEX---------------------------------------------------------------------------------------------------------
 
                                                                     QUERY PLAN
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,20 +49,264 @@
 --O xronos ekteleshs meiwthike meta to index poy valame ston "Listing" sto---------
 --pedio host_id, dioti yparxoyn values tou host_id polles fores ston pinaka--------
 -----------------------------------------------------------------------------------
+--drop index ix_hosts_id
 
 
 
+--QUERY--(Deftero QUERY ekfwnishs)--
+/*
+      EXPLAIN ANALYZE
+      SELECT "Listing".id, price 
+      FROM "Listing", "Price" 
+      WHERE guests_included > 5 AND price > 40;
+*/
+--WITHOUT INDEX---------------------------------------------------------------------------------------------
+
+                                                                   QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=10000000000.28..10000020243.56 rows=1569576 width=8) (actual time=0.049..1589.598 rows=2469774 loops=1)
+   ->  Index Only Scan using "Listings_pkey" on "Listing"  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.020..3.790 rows=11541 loops=1)
+         Heap Fetches: 0
+   ->  Materialize  (cost=10000000000.00..10000000314.80 rows=136 width=4) (actual time=0.000..0.050 rows=214 loops=11541)
+         ->  Seq Scan on "Price"  (cost=10000000000.00..10000000314.11 rows=136 width=4) (actual time=0.026..1.228 rows=214 loops=1)
+               Filter: ((guests_included > 5) AND (price > '40'::numeric))
+               Rows Removed by Filter: 11327
+ Planning time: 0.096 ms
+ Execution time: 2030.149 ms
+(9 rows)
+
+--WITH INDEX----------------------------------------------------------------------------------------------
+
+                                                                   QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.57..19937.40 rows=1569576 width=8) (actual time=0.045..1543.509 rows=2469774 loops=1)
+   ->  Index Only Scan using "Listings_pkey" on "Listing"  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.019..3.528 rows=11541 loops=1)
+         Heap Fetches: 0
+   ->  Materialize  (cost=0.29..8.65 rows=136 width=4) (actual time=0.000..0.046 rows=214 loops=11541)
+         ->  Index Only Scan using ix_guests_price on "Price"  (cost=0.29..7.97 rows=136 width=4) (actual time=0.022..0.084 rows=214 loops=1)
+               Index Cond: ((guests_included > 5) AND (price > '40'::numeric))
+               Heap Fetches: 0
+ Planning time: 0.115 ms
+ Execution time: 1983.760 ms
+(9 rows)
+
+-----------------------------------------------------------------------------------
+---------------/* Query: w/out index: 2030.149 ms; w/index: 1983.760 ms */---------
+-----------------------------------------------------------------------------------
+--O xronos ekteleshs den meiwthike dramatika meta ta indexes poy valame------------
+--ston "Price" sta pedia guests_included kai price, dioti yparxoyn values----------
+--poy epanalamvanontai.------------------------------------------------------------
+--Episis dokimasame na valoume index sto pedio price toy pinaka "Price"------------
+--kai eixame sxedon idia apotelesmata.---------------------------------------------
+-----------------------------------------------------------------------------------
+
+/************************************************************************************************************************************/
+/******************************************      AKOLOY8OYN QUERIES APO THN 5h ERGASIA     ******************************************/
+/************************************************************************************************************************************/
 
 
+--1st QUERY-----------------
+/*
+      EXPLAIN ANALYZE
+      SELECT n.neighbourhood,l.id
+	FROM "Neighbourhood" as n
+	LEFT OUTER JOIN "Location" as loc on loc.neighbourhood_cleansed = n.neighbourhood
+	INNER JOIN "Listing" as L ON l.id = loc.id;
+*/
+--WITHOUT INDEX----------------
+
+                                                                           QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=10000000463.04..10000000874.90 rows=11541 width=25) (actual time=5.922..21.399 rows=11541 loops=1)
+   Hash Cond: (loc.id = l.id)
+   ->  Hash Join  (cost=10000000009.38..10000000390.93 rows=11541 width=25) (actual time=0.048..9.823 rows=11541 loops=1)
+         Hash Cond: ((loc.neighbourhood_cleansed)::text = (n.neighbourhood)::text)
+         ->  Seq Scan on "Location" loc  (cost=10000000000.00..10000000348.41 rows=11541 width=33) (actual time=0.004..2.701 rows=11541 loops=1)
+         ->  Hash  (cost=8.81..8.81 rows=45 width=21) (actual time=0.036..0.036 rows=45 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 11kB
+               ->  Index Only Scan using neighbourhoods_pkey on "Neighbourhood" n  (cost=0.14..8.81 rows=45 width=21) (actual time=0.006..0.017 rows=45 loops=1)
+                     Heap Fetches: 0
+   ->  Hash  (cost=309.40..309.40 rows=11541 width=4) (actual time=5.854..5.854 rows=11541 loops=1)
+         Buckets: 16384  Batches: 1  Memory Usage: 534kB
+         ->  Index Only Scan using "Listings_pkey" on "Listing" l  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.012..2.759 rows=11541 loops=1)
+               Heap Fetches: 0
+ Planning time: 0.304 ms
+ Execution time: 23.603 ms
+(15 rows)
+
+----------------------------------------------------------------------------------------------------------------
+--Gia to 1st QUERY dokimasame kapoia indexes kai kataliksame sto gegonos oti den mporei na epitaxinthei---------
+--Kapoia apo afta poy dokimasame htan:--------------------------------------------------------------------------
+--1--create index ix_loc_id on "Location"(id);--Execution time: 31.667 ms---------------------------------------
+--2-- create index ix_neighbourhood_cleansed on "Location"(neighbourhood_cleansed);--Execution time: 26.443 ms--
+----------------------------------------------------------------------------------------------------------------
+
+--2nd QUERY------------------
+/*
+      EXPLAIN ANALYZE
+      with cte as (
+	SELECT l.id , l.name ,p.price as price
+		FROM "Listing" as l
+		INNER JOIN "Price" as p ON p.id = l.id
+		INNER JOIN "Room" as r on r.id = l.id
+		INNER JOIN "Room_Amenities" AS ra ON ra.room_id = r.id
+		INNER JOIN "Amenity" AS am ON am.amenity_id = ra.amenity_id
+		WHERE am.amenity_name IN ('Dishwasher','Dryer')
+		GROUP BY l.id,p.price
+	HAVING COUNT(am.amenity_name)=2
+      )
+      SELECT cte.id,cte.name,cte.price
+            FROM cte
+            WHERE cte.price = (SELECT MIN(cte.price) FROM cte);
+*/
+--WITHOUT INDEX----------------
+
+                                                                                             QUERY PLAN                                                                          
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ CTE Scan on cte  (cost=10000005603.88..10000005634.21 rows=7 width=254) (actual time=37.813..37.871 rows=1 loops=1)
+   Filter: (price = $4)
+   Rows Removed by Filter: 419
+   CTE cte
+     ->  GroupAggregate  (cost=10000005546.58..10000005573.54 rows=1348 width=46) (actual time=35.178..37.400 rows=420 loops=1)
+           Group Key: l.id, p.price
+           Filter: (count(am.amenity_name) = 2)
+           Rows Removed by Filter: 2353
+           ->  Sort  (cost=10000005546.58..10000005549.95 rows=1348 width=61) (actual time=35.169..35.806 rows=3193 loops=1)
+                 Sort Key: l.id, p.price
+                 Sort Method: quicksort  Memory: 498kB
+                 ->  Hash Join  (cost=10000000401.81..10000005476.50 rows=1348 width=61) (actual time=7.024..33.236 rows=3193 loops=1)
+                       Hash Cond: (l.id = p.id)
+                       ->  Nested Loop  (cost=1.14..5057.30 rows=1348 width=65) (actual time=0.064..24.095 rows=3193 loops=1)
+                             ->  Nested Loop  (cost=0.85..4633.64 rows=1348 width=61) (actual time=0.056..16.756 rows=3193 loops=1)
+                                   ->  Nested Loop  (cost=0.56..4110.78 rows=1348 width=19) (actual time=0.051..8.557 rows=3193 loops=1)
+                                         ->  Index Scan using "Amenity_pkey" on "Amenity" am  (cost=0.14..16.61 rows=2 width=19) (actual time=0.031..0.062 rows=2 loops=1)
+                                               Filter: (amenity_name = ANY ('{Dishwasher,Dryer}'::text[]))
+                                               Rows Removed by Filter: 196
+                                         ->  Index Only Scan using "Room_Amenities_pkey" on "Room_Amenities" ra  (cost=0.42..2015.31 rows=3178 width=8) (actual time=0.013..3.589 rows=1596 loops=2)
+                                               Index Cond: (amenity_id = am.amenity_id)
+                                               Heap Fetches: 0
+                                   ->  Index Scan using "Listings_pkey" on "Listing" l  (cost=0.29..0.39 rows=1 width=42) (actual time=0.002..0.002 rows=1 loops=3193)
+                                         Index Cond: (id = ra.room_id)
+                             ->  Index Only Scan using "Room_pkey" on "Room" r  (cost=0.29..0.31 rows=1 width=4) (actual time=0.001..0.001 rows=1 loops=3193)
+                                   Index Cond: (id = l.id)
+                                   Heap Fetches: 0
+                       ->  Hash  (cost=10000000256.41..10000000256.41 rows=11541 width=8) (actual time=6.938..6.938 rows=11541 loops=1)
+                             Buckets: 16384  Batches: 1  Memory Usage: 624kB
+                             ->  Seq Scan on "Price" p  (cost=10000000000.00..10000000256.41 rows=11541 width=8) (actual time=0.004..3.478 rows=11541 loops=1)
+   InitPlan 2 (returns $4)
+     ->  Aggregate  (cost=30.33..30.34 rows=1 width=32) (actual time=2.618..2.618 rows=1 loops=1)
+           ->  CTE Scan on cte cte_1  (cost=0.00..26.96 rows=1348 width=32) (actual time=0.001..2.483 rows=420 loops=1)
+ Planning time: 2.491 ms
+ Execution time: 37.962 ms
+(35 rows)
+
+--WITH INDEX----------------
+
+                                                                                             QUERY PLAN                                                                          
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ CTE Scan on cte  (cost=10000002756.09..10000002786.42 rows=7 width=254) (actual time=32.498..32.550 rows=1 loops=1)
+   Filter: (price = $3)
+   Rows Removed by Filter: 419
+   CTE cte
+     ->  GroupAggregate  (cost=10000002698.79..10000002725.75 rows=1348 width=46) (actual time=30.023..32.122 rows=420 loops=1)
+           Group Key: l.id, p.price
+           Filter: (count(am.amenity_name) = 2)
+           Rows Removed by Filter: 2353
+           ->  Sort  (cost=10000002698.79..10000002702.16 rows=1348 width=61) (actual time=30.016..30.620 rows=3193 loops=1)
+                 Sort Key: l.id, p.price
+                 Sort Method: quicksort  Memory: 498kB
+                 ->  Hash Join  (cost=10000002315.55..10000002628.72 rows=1348 width=61) (actual time=21.654..28.467 rows=3193 loops=1)
+                       Hash Cond: (p.id = l.id)
+                       ->  Seq Scan on "Price" p  (cost=10000000000.00..10000000256.41 rows=11541 width=8) (actual time=0.005..2.546 rows=11541 loops=1)
+                       ->  Hash  (cost=2298.70..2298.70 rows=1348 width=65) (actual time=21.642..21.642 rows=3193 loops=1)
+                             Buckets: 4096 (originally 2048)  Batches: 1 (originally 1)  Memory Usage: 324kB
+                             ->  Hash Join  (cost=1932.83..2298.70 rows=1348 width=65) (actual time=13.711..20.325 rows=3193 loops=1)
+                                   Hash Cond: (r.id = l.id)
+                                   ->  Index Only Scan using "Room_pkey" on "Room" r  (cost=0.29..309.40 rows=11541 width=4) (actual time=0.012..2.734 rows=11541 loops=1)
+                                         Heap Fetches: 0
+                                   ->  Hash  (cost=1915.69..1915.69 rows=1348 width=61) (actual time=13.693..13.693 rows=3193 loops=1)
+                                         Buckets: 4096 (originally 2048)  Batches: 1 (originally 1)  Memory Usage: 311kB
+                                         ->  Nested Loop  (cost=61.48..1915.69 rows=1348 width=61) (actual time=0.201..12.010 rows=3193 loops=1)
+                                               ->  Nested Loop  (cost=61.19..1392.84 rows=1348 width=19) (actual time=0.193..3.855 rows=3193 loops=1)
+                                                     ->  Index Scan using "Amenity_pkey" on "Amenity" am  (cost=0.14..16.61 rows=2 width=19) (actual time=0.016..0.042 rows=2 loops=1)
+                                                           Filter: (amenity_name = ANY ('{Dishwasher,Dryer}'::text[]))
+                                                           Rows Removed by Filter: 196
+                                                     ->  Bitmap Heap Scan on "Room_Amenities" ra  (cost=61.05..656.33 rows=3178 width=8) (actual time=0.176..1.220 rows=1596 loops=2)
+                                                           Recheck Cond: (amenity_id = am.amenity_id)
+                                                           Heap Blocks: exact=1099
+                                                           ->  Bitmap Index Scan on ix_room_amenities_amenity_id  (cost=0.00..60.26 rows=3178 width=0) (actual time=0.116..0.116 rows=1596 loops=2)
+                                                                 Index Cond: (amenity_id = am.amenity_id)
+                                               ->  Index Scan using "Listings_pkey" on "Listing" l  (cost=0.29..0.39 rows=1 width=42) (actual time=0.002..0.002 rows=1 loops=3193)
+                                                     Index Cond: (id = ra.room_id)
+   InitPlan 2 (returns $3)
+     ->  Aggregate  (cost=30.33..30.34 rows=1 width=32) (actual time=2.460..2.461 rows=1 loops=1)
+           ->  CTE Scan on cte cte_1  (cost=0.00..26.96 rows=1348 width=32) (actual time=0.001..2.336 rows=420 loops=1)
+ Planning time: 1.421 ms
+ Execution time: 32.642 ms
+(39 rows)
+
+-----------------------------------------------------------------------------------
+---------------/* Query 2: w/out index: 37.962 ms ms; w/index: 32.642 ms */--------
+-----------------------------------------------------------------------------------
+--O xronos ekteleshs meiwthike meta to index poy valame ston "Room_Amenities" sto--
+--pedio amenity_id, dioti to amenity_id yparxei polles fores ston pinaka-----------
+-----------------------------------------------------------------------------------
 
 
+--3rd QUERY------------------
+/*
+      EXPLAIN ANALYZE
+      SELECT COUNT(r_a.room_id), am.amenity_name
+      FROM "Room_Amenities" r_a 
+      INNER JOIN "Amenity" am ON r_a.amenity_id = am.amenity_id
+      GROUP BY am.amenity_name
+      HAVING COUNT(r_a.room_id) >= 100;
+*/
+--WITHOUT INDEX----------------
+                                                                                             QUERY PLAN                                                                          
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize GroupAggregate  (cost=4692.46..4698.40 rows=198 width=23) (actual time=155.962..156.033 rows=26 loops=1)
+   Group Key: am.amenity_name
+   Filter: (count(r_a.room_id) >= 100)
+   Rows Removed by Filter: 20
+   ->  Sort  (cost=4692.46..4693.45 rows=396 width=23) (actual time=155.955..155.980 rows=127 loops=1)
+         Sort Key: am.amenity_name
+         Sort Method: quicksort  Memory: 32kB
+         ->  Gather  (cost=4633.79..4675.37 rows=396 width=23) (actual time=154.977..155.852 rows=127 loops=1)
+               Workers Planned: 2
+               Workers Launched: 2
+               ->  Partial HashAggregate  (cost=3633.79..3635.77 rows=198 width=23) (actual time=147.186..147.200 rows=42 loops=3)
+                     Group Key: am.amenity_name
+                     ->  Hash Join  (cost=19.01..3355.71 rows=55617 width=19) (actual time=0.178..98.922 rows=44494 loops=3)
+                           Hash Cond: (r_a.amenity_id = am.amenity_id)
+                           ->  Parallel Index Only Scan using "Room_Amenities_pkey" on "Room_Amenities" r_a  (cost=0.42..3188.00 rows=55617 width=8) (actual time=0.022..35.861 rows=44494 loops=3)
+                                 Heap Fetches: 0
+                           ->  Hash  (cost=16.12..16.12 rows=198 width=19) (actual time=0.133..0.134 rows=198 loops=3)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 19kB
+                                 ->  Index Scan using "Amenity_pkey" on "Amenity" am  (cost=0.14..16.12 rows=198 width=19) (actual time=0.009..0.072 rows=198 loops=3)
+ Planning time: 0.192 ms
+ Execution time: 156.143 ms
+(21 rows)
 
-
+----------------------------------------------------------------------------------------------------------------
+--Gia to 3rd QUERY dokimasame kapoia indexes kai kataliksame sto gegonos oti den mporei na epitaxinthei---------
+--Kapoia apo afta poy dokimasame htan:--------------------------------------------------------------------------
+--1--create index ix_ra_amenityid on "Room_Amenities"(amenity_id);--Execution time: 157.976 ms------------------
+----------------------------------------------------------------------------------------------------------------
 
 
 --4th QUERY------------------
---BEFORE INDEX----------------
-
+/*
+      EXPLAIN ANALYZE
+      SELECT l.id, geo.geometry_coordinates_0_0_0_0
+	FROM "Listing" as l
+	INNER JOIN "Location" as loc ON loc.id = l.id
+	INNER JOIN "Geolocation" as geo ON geo.properties_neighbourhood = loc.neighbourhood_cleansed
+	INNER JOIN "Room_Amenities" as ra ON ra.room_id = l.id
+	INNER JOIN "Amenity" as am ON am.amenity_id = ra.amenity_id 
+	WHERE am.amenity_name= 'Netflix';
+*/
+--WITHOUT INDEX----------------
 
                                                                                       QUERY PLAN                                                  
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,8 +337,7 @@
 
 
 --4th QUERY-----------------------------------------
---AFTER INDEX---------------------------------------
-
+--WITH INDEX---------------------------------------
 
                                                                                QUERY PLAN                                                         
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -127,4 +376,74 @@
 -----------------------------------------------------------------------------------
 
 
+--5th QUERY------------------
+/*
+      EXPLAIN ANALYZE
+      SELECT h.name,h.id,COUNT(h.id)
+            FROM "Host" as h
+            INNER JOIN "Listing" as l ON l.host_id = h.id
+            INNER JOIN "Room" as r ON r.id = l.id 
+            INNER JOIN "Room_Amenities" as ra ON ra.room_id = r.id
+            WHERE r.beds=3 AND r.accommodates=3 AND h.response_time = 'within an hour'
+      GROUP BY h.name,h.id;
+*/
+--WITHOUT INDEX----------------
 
+                                                                          QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+ HashAggregate  (cost=3461.75..3477.60 rows=1585 width=20) (actual time=4.701..4.717 rows=37 loops=1)
+   Group Key: h.id
+   ->  Nested Loop  (cost=1.27..3453.83 rows=1585 width=12) (actual time=0.049..4.531 rows=474 loops=1)
+         Join Filter: (r.id = ra.room_id)
+         ->  Nested Loop  (cost=0.85..3323.65 rows=137 width=20) (actual time=0.040..4.038 rows=43 loops=1)
+               ->  Nested Loop  (cost=0.57..3205.14 rows=250 width=12) (actual time=0.021..3.725 rows=104 loops=1)
+                     ->  Index Scan using "Room_pkey" on "Room" r  (cost=0.29..2033.51 rows=250 width=4) (actual time=0.014..3.358 rows=104 loops=1)
+                           Filter: ((beds = 3) AND (accommodates = 3))
+                           Rows Removed by Filter: 11437
+                     ->  Index Scan using "Listings_pkey" on "Listing" l  (cost=0.29..4.69 rows=1 width=8) (actual time=0.003..0.003 rows=1 loops=104)
+                           Index Cond: (id = r.id)
+               ->  Index Scan using "Host_pkey" on "Host" h  (cost=0.28..0.47 rows=1 width=12) (actual time=0.002..0.002 rows=0 loops=104)
+                     Index Cond: (id = l.host_id)
+                     Filter: ((response_time)::text = 'within an hour'::text)
+                     Rows Removed by Filter: 1
+         ->  Index Only Scan using "Room_Amenities_pkey" on "Room_Amenities" ra  (cost=0.42..0.80 rows=12 width=4) (actual time=0.003..0.006 rows=11 loops=43)
+               Index Cond: (room_id = l.id)
+               Heap Fetches: 0
+ Planning time: 0.585 ms
+ Execution time: 4.785 ms
+(20 rows)
+
+--WITH INDEX----------------
+
+                                                                          QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+ HashAggregate  (cost=2060.57..2076.42 rows=1585 width=20) (actual time=1.469..1.486 rows=37 loops=1)
+   Group Key: h.id
+   ->  Nested Loop  (cost=7.83..2052.64 rows=1585 width=12) (actual time=0.058..1.306 rows=474 loops=1)
+         Join Filter: (r.id = ra.room_id)
+         ->  Nested Loop  (cost=7.42..1922.47 rows=137 width=20) (actual time=0.049..0.838 rows=43 loops=1)
+               ->  Nested Loop  (cost=7.13..1803.95 rows=250 width=12) (actual time=0.035..0.532 rows=104 loops=1)
+                     ->  Bitmap Heap Scan on "Room" r  (cost=6.85..632.32 rows=250 width=4) (actual time=0.028..0.161 rows=104 loops=1)
+                           Recheck Cond: ((beds = 3) AND (accommodates = 3))
+                           Heap Blocks: exact=96
+                           ->  Bitmap Index Scan on ix_room_beds_accommodates  (cost=0.00..6.79 rows=250 width=0) (actual time=0.015..0.016 rows=104 loops=1)
+                                 Index Cond: ((beds = 3) AND (accommodates = 3))
+                     ->  Index Scan using "Listings_pkey" on "Listing" l  (cost=0.29..4.69 rows=1 width=8) (actual time=0.003..0.003 rows=1 loops=104)
+                           Index Cond: (id = r.id)
+               ->  Index Scan using "Host_pkey" on "Host" h  (cost=0.28..0.47 rows=1 width=12) (actual time=0.002..0.002 rows=0 loops=104)
+                     Index Cond: (id = l.host_id)
+                     Filter: ((response_time)::text = 'within an hour'::text)
+                     Rows Removed by Filter: 1
+         ->  Index Only Scan using "Room_Amenities_pkey" on "Room_Amenities" ra  (cost=0.42..0.80 rows=12 width=4) (actual time=0.003..0.006 rows=11 loops=43)
+               Index Cond: (room_id = l.id)
+               Heap Fetches: 0
+ Planning time: 0.641 ms
+ Execution time: 1.562 ms
+(22 rows)
+
+-----------------------------------------------------------------------------------
+---------------/* Query 5: w/out index: 4.785 ms; w/index: 1.562 ms */-------------
+-----------------------------------------------------------------------------------
+--O xronos ekteleshs meiwthike meta to index poy valame ston "Room" sta------------
+--pedia beds kai accommodates dioti epanalamvanontai values------------------------
+-----------------------------------------------------------------------------------
