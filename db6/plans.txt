@@ -8,7 +8,6 @@
 */
 --WITHOUT INDEX--------------------------------------------------------------------------------------------------------
 
-                                                                   QUERY PLAN
  GroupAggregate  (cost=10000003709.40..10000004195.19 rows=6363 width=12) (actual time=14.446..30.798 rows=6363 loops=1)
    Group Key: "Host".id
    ->  Merge Join  (cost=10000003709.40..10000004073.85 rows=11541 width=4) (actual time=14.434..25.749 rows=11541 loops=1)
@@ -26,7 +25,6 @@
 
 --WITH INDEX---------------------------------------------------------------------------------------------------------
 
-                                                                    QUERY PLAN
  HashAggregate  (cost=652.69..716.32 rows=6363 width=12) (actual time=16.203..18.022 rows=6363 loops=1)
    Group Key: "Host".id
    ->  Hash Join  (cost=255.55..594.98 rows=11541 width=4) (actual time=3.492..12.064 rows=11541 loops=1)
