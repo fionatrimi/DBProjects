@@ -319,7 +319,6 @@ Finalize GroupAggregate  (cost=4692.46..4698.40 rows=198 width=23) (actual time=
 (23 rows)
 
 
---4th QUERY-----------------------------------------
 --WITH INDEX---------------------------------------
 
  Hash Join  (cost=10000000973.54..10000001373.90 rows=674 width=13) (actual time=0.854..6.696 rows=109 loops=1)
