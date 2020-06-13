@@ -1,5 +1,5 @@
 create table Credits(
-   cast text,
+   casting text,
    crew text,
    id int
 );
