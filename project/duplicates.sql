@@ -66,3 +66,6 @@ movieid = l.movieid,
 imdbid = l.imdbid
 FROM "Movies".Links_backup as l
 WHERE l2.tmdbid = l.tmdbid
+
+DELETE FROM "Movies".Links2 WHERE tmdbid NOT IN(
+SELECT id FROM "Movies".Movies_Metadata2)
