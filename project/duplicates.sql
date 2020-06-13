@@ -69,3 +69,6 @@ WHERE l2.tmdbid = l.tmdbid
 
 DELETE FROM "Movies".Links2 WHERE tmdbid NOT IN(
 SELECT id FROM "Movies".Movies_Metadata2)
+
+DELETE FROM "Movies".ratings_small WHERE movieid NOT IN(
+SELECT id FROM "Movies".Movies_Metadata2)
