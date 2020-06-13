@@ -21,6 +21,10 @@ keywords = k.keywords
 FROM "Movies".Keywords as k
 WHERE k2.id = k.id
 
+INSERT INTO "Movies".Movies_Metadata2(id)
+SELECT DISTINCT id
+	FROM "Movies".Movies_Metadata
+
 
 UPDATE "Movies".Movies_Metadata2 as md2
 SET
