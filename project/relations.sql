@@ -12,3 +12,12 @@ ADD FOREIGN KEY (tmdbid) REFERENCES "Movies".Movies_Metadata2(id);
 
 ALTER TABLE "Movies".Credits2
 ADD FOREIGN KEY (id) REFERENCES "Movies".Movies_Metadata2(id);
+
+ALTER TABLE "Movies".Credits2
+ADD PRIMARY KEY (id);
+
+ALTER TABLE "Movies".Keywords2
+ADD PRIMARY KEY (id);
+
+ALTER TABLE "Movies".Keywords2
+ADD FOREIGN KEY (id) REFERENCES "Movies".Movies_Metadata2(id);
