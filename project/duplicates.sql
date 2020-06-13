@@ -54,3 +54,15 @@ vote_count      = md.vote_count
 
 FROM "Movies".Movies_Metadata as md
 WHERE md2.id = md.id;
+
+
+INSERT INTO "Movies".Links2(tmdbid)
+SELECT DISTINCT tmdbid
+	FROM "Movies".Links_backup
+	
+UPDATE "Movies".Links2 as l2
+SET
+movieid = l.movieid,
+imdbid = l.imdbid
+FROM "Movies".Links_backup as l
+WHERE l2.tmdbid = l.tmdbid
