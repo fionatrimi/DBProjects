@@ -15,3 +15,8 @@ INSERT INTO "Movies".Keywords2(id)
 SELECT DISTINCT id
 	FROM "Movies".Keywords
 
+UPDATE "Movies".Keywords2 as k2
+SET
+keywords = k.keywords
+FROM "Movies".Keywords as k
+WHERE k2.id = k.id
