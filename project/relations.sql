@@ -1,4 +1,4 @@
-ALTER TABLE Movies_Metadata
+ALTER TABLE "Movies".Movies_Metadata2
 ADD PRIMARY KEY (id);
 
 ALTER TABLE Ratings_Small
