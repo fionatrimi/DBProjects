@@ -1,6 +1,9 @@
 ALTER TABLE "Movies".Movies_Metadata2
 ADD PRIMARY KEY (id);
 
+ALTER TABLE "Movies".Credits2
+ADD PRIMARY KEY (id);
+
 ALTER TABLE "Movies".Ratings_Small
 ADD FOREIGN KEY (movieid) REFERENCES "Movies".Movies_Metadata2(id);
 
