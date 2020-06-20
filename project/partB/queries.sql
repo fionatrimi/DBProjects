@@ -31,3 +31,8 @@ SELECT userid, COUNT(rating) AS count_ratings_per_user
 FROM "Movies".ratings_small
 GROUP BY userid
 
+
+CREATE VIEW user_id_ratings_avg_rating AS
+SELECT userid, count(rating::numeric) as ratings_count, sum(rating::numeric)
+FROM "Movies".ratings_small
+GROUP BY userid
