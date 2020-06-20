@@ -25,3 +25,9 @@ select userid,
 round(avg(rating::numeric), 2) as avg_rating_per_user
 from "Movies".ratings_small
 group by userid
+
+/*Αριθμός από ratings ανά χρήστη*/
+SELECT userid, COUNT(rating) AS count_ratings_per_user
+FROM "Movies".ratings_small
+GROUP BY userid
+
