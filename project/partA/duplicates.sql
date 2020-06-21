@@ -15,6 +15,11 @@ crew = c.crew
 FROM "Movies".Credits as c
 WHERE c2.id = c.id
 
+DROP TABLE Credits;
+
+ALTER TABLE Credits2   
+    RENAME TO Credits;  
+
 create table "Movies".Keywords2(
    id int,
    keywords text
@@ -29,6 +34,11 @@ SET
 keywords = k.keywords
 FROM "Movies".Keywords as k
 WHERE k2.id = k.id
+
+DROP TABLE Keywords;
+
+ALTER TABLE Keywords2   
+    RENAME TO Keywords;
 
 create table "Movies".Movies_Metadata2(
    adult varchar(10),
@@ -91,6 +101,12 @@ vote_count      = md.vote_count
 FROM "Movies".Movies_Metadata as md
 WHERE md2.id = md.id;
 
+
+DROP TABLE Movies_Metadata;
+
+ALTER TABLE Movies_Metadata2   
+    RENAME TO Movies_Metadata;
+
 create table "Movies".Links2(
    movieId int,
    imdbId int,
@@ -99,14 +115,19 @@ create table "Movies".Links2(
 
 INSERT INTO "Movies".Links2(tmdbid)
 SELECT DISTINCT tmdbid
-	FROM "Movies".Links_backup
+	FROM "Movies".Links
 	
 UPDATE "Movies".Links2 as l2
 SET
 movieid = l.movieid,
 imdbid = l.imdbid
-FROM "Movies".Links_backup as l
+FROM "Movies".Links as l
 WHERE l2.tmdbid = l.tmdbid
+
+DROP TABLE Links;
+
+ALTER TABLE Links2   
+    RENAME TO Links;
 
 DELETE FROM "Movies".Links2 WHERE tmdbid NOT IN(
 SELECT id FROM "Movies".Movies_Metadata2)
