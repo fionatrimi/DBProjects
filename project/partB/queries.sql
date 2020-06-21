@@ -13,7 +13,7 @@ GROUP BY y.x ;
 /* Αριθμός ταινιών ανά είδος(genre) και ανά χρόνο */
 SELECT
 y.x->'name' "name",COUNT(id),date_part('year',release_date) as year
-FROM "Movies".movies_metadata2,
+FROM "Movies".movies_metadata,
 LATERAL (SELECT jsonb_array_elements(genres::jsonb)x)y
 GROUP BY y.x,year ;
 
