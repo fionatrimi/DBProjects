@@ -15,10 +15,10 @@ crew = c.crew
 FROM "Movies".Credits as c
 WHERE c2.id = c.id
 
-DROP TABLE Credits;
+DROP TABLE "Movies".Credits;
 
-ALTER TABLE Credits2   
-    RENAME TO Credits;  
+ALTER TABLE "Movies".Credits2   
+    RENAME TO Credits;    
 
 create table "Movies".Keywords2(
    id int,
@@ -35,9 +35,9 @@ keywords = k.keywords
 FROM "Movies".Keywords as k
 WHERE k2.id = k.id
 
-DROP TABLE Keywords;
+DROP TABLE "Movies".Keywords;
 
-ALTER TABLE Keywords2   
+ALTER TABLE "Movies".Keywords2   
     RENAME TO Keywords;
 
 create table "Movies".Movies_Metadata2(
@@ -102,9 +102,9 @@ FROM "Movies".Movies_Metadata as md
 WHERE md2.id = md.id;
 
 
-DROP TABLE Movies_Metadata;
+DROP TABLE "Movies".Movies_Metadata;
 
-ALTER TABLE Movies_Metadata2   
+ALTER TABLE "Movies".Movies_Metadata2   
     RENAME TO Movies_Metadata;
 
 create table "Movies".Links2(
@@ -124,13 +124,13 @@ imdbid = l.imdbid
 FROM "Movies".Links as l
 WHERE l2.tmdbid = l.tmdbid
 
-DROP TABLE Links;
+DROP TABLE "Movies".Links;
 
-ALTER TABLE Links2   
+ALTER TABLE "Movies".Links2   
     RENAME TO Links;
 
-DELETE FROM "Movies".Links2 WHERE tmdbid NOT IN(
-SELECT id FROM "Movies".Movies_Metadata2)
+DELETE FROM "Movies".Links WHERE tmdbid NOT IN(
+SELECT id FROM "Movies".Movies_Metadata)
 
 DELETE FROM "Movies".ratings_small WHERE movieid NOT IN(
-SELECT id FROM "Movies".Movies_Metadata2)
+SELECT id FROM "Movies".Movies_Metadata)
