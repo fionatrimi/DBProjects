@@ -1,3 +1,9 @@
+create table Credits2(
+   casting text,
+   crew text,
+   id int
+);
+
 INSERT INTO "Movies".Credits2(id)
 SELECT DISTINCT id
 	FROM "Movies".Credits
@@ -9,7 +15,10 @@ crew = c.crew
 FROM "Movies".Credits as c
 WHERE c2.id = c.id
 
-
+create table "Movies".Keywords2(
+   id int,
+   keywords text
+);
 
 INSERT INTO "Movies".Keywords2(id)
 SELECT DISTINCT id
@@ -20,6 +29,33 @@ SET
 keywords = k.keywords
 FROM "Movies".Keywords as k
 WHERE k2.id = k.id
+
+create table "Movies".Movies_Metadata2(
+   adult varchar(10),
+   belongs_to_collection varchar(190),
+   budget int,
+   genres varchar(270),
+   homepage varchar(250),
+   id int,
+   imdb_id varchar(10),
+   original_language varchar(10),
+   original_title varchar(110),
+   overview varchar(1000),
+   popularity varchar(10),
+   poster_path varchar(40),
+   production_companies varchar(1260),
+   production_countries varchar(1040),
+   release_date date,
+   revenue int,
+   runtime varchar(10),
+   spoken_languages varchar(770),
+   status varchar(20),
+   tagline varchar(300),
+   title varchar(110),
+   video varchar(10),
+   vote_average varchar(10),
+   vote_count int
+);
 
 INSERT INTO "Movies".Movies_Metadata2(id)
 SELECT DISTINCT id
@@ -55,6 +91,11 @@ vote_count      = md.vote_count
 FROM "Movies".Movies_Metadata as md
 WHERE md2.id = md.id;
 
+create table "Movies".Links2(
+   movieId int,
+   imdbId int,
+   tmdbId int
+);
 
 INSERT INTO "Movies".Links2(tmdbid)
 SELECT DISTINCT tmdbid
