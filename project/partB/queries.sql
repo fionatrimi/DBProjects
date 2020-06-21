@@ -1,10 +1,14 @@
+SELECT COUNT(id) , date_part('year',release_date) as year
+FROM "Movies".movies_metadata
+GROUP BY year
+ORDER BY year;
 
 /* Αριθμός ταινιών ανά είδος(genres) */
 SELECT
 y.x->'name' "name",COUNT(id)
 FROM "Movies".movies_metadata,
 LATERAL (SELECT jsonb_array_elements(genres::jsonb)x)y
-GROUP BY y.x
+GROUP BY y.x ;
 
 /* Αριθμός από ratings ανά χρήστη */
 select userid, count(userid)
@@ -18,22 +22,22 @@ y.x->'name' "name", round(avg(rating::numeric), 2)
 from "Movies".movies_metadata as mm
 INNER JOIN "Movies".ratings_small as r ON r.movieid = mm.id,
 LATERAL (SELECT jsonb_array_elements(genres::jsonb)x)y
-GROUP BY y.x
+GROUP BY y.x ;
 
 /* Μέση βαθμολογία (rating) ανά χρήστη */
 select userid, 
 round(avg(rating::numeric), 2) as avg_rating_per_user
 from "Movies".ratings_small
-group by userid
+group by userid ;
 
 /*Αριθμός από ratings ανά χρήστη*/
 SELECT userid, COUNT(rating) AS count_ratings_per_user
 FROM "Movies".ratings_small
-GROUP BY userid
+GROUP BY userid ;
 
 /* view table */
 create view user_ratings as
 select userid, 
 round(avg(rating::numeric), 2) as avg_rating_per_user, count(userid) as rating_count
 from "Movies".ratings_small
-group by userid
+group by userid ;
